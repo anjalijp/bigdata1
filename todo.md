@@ -1,3 +1,3 @@
-topic creation through code
 dockerize the application
 add logs everywhere
+3 brokers
