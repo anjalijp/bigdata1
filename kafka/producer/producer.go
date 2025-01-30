@@ -1,4 +1,4 @@
-package kafka
+package producer
 
 import (
 	"crypto/sha256"
@@ -10,22 +10,13 @@ import (
 	"os"
 
 	"github.com/bigdata1/config"
+	"github.com/bigdata1/models"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 )
-
-type Review struct {
-	ListingID    string `json:"listing_id"`
-	ID           string `json:"id"`
-	Date         string `json:"date"`
-	ReviewerID   string `json:"reviewer_id"`
-	ReviewerName string `json:"reviewer_name"`
-	Comments     string `json:"comments"`
-}
 
 func Producer() {
 	cfg := config.NewConfig()
 
-	// Create a new Kafka producer
 	producer, err := kafka.NewProducer(&kafka.ConfigMap{
 		"bootstrap.servers": cfg.KafkaBroker,
 	})
@@ -34,17 +25,14 @@ func Producer() {
 	}
 	defer producer.Close()
 
-	// Open the CSV file
 	file, err := os.Open(cfg.CSVFilePath)
 	if err != nil {
 		log.Fatalf("Failed to open CSV file: %v", err)
 	}
 	defer file.Close()
 
-	// Create a CSV reader
 	reader := csv.NewReader(file)
 
-	// Skip the header row
 	_, err = reader.Read()
 	if err != nil {
 		log.Fatalf("Failed to read CSV header: %v", err)
@@ -56,7 +44,7 @@ func Producer() {
 			record, err := reader.Read()
 			if err != nil {
 				if err.Error() == "EOF" {
-					break // End of file
+					break
 				}
 				log.Fatalf("Failed to read CSV record: %v", err)
 			}
@@ -64,12 +52,11 @@ func Producer() {
 		}
 
 		if len(chunk) == 0 {
-			break // No more data to process
+			break
 		}
 
-		// Send the chunk to Kafka
 		for _, record := range chunk {
-			review := Review{
+			review := models.Review{
 				ListingID:    string(record[0]),
 				ID:           string(record[1]),
 				Date:         string(record[2]),
@@ -78,13 +65,12 @@ func Producer() {
 				Comments:     string(record[5]),
 			}
 
-			// Marshal the struct to JSON
 			message, err := json.Marshal(review)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			hash := sha256.Sum256([]byte(message)) // Generate SHA-256 hash
+			hash := sha256.Sum256([]byte(message))
 			uniqueID := hex.EncodeToString(hash[:])
 			err = producer.Produce(&kafka.Message{
 				TopicPartition: kafka.TopicPartition{Topic: &cfg.KafkaTopic, Partition: kafka.PartitionAny},

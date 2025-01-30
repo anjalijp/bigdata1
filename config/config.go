@@ -3,20 +3,22 @@ package config
 import "time"
 
 type Config struct {
-	KafkaBroker       string
-	KafkaTopic        string
-	CSVFilePath       string
-	KafkaChunkSize    int
-	KafkaDelaySeconds time.Duration
+	KafkaBroker        string
+	KafkaTopic         string
+	CSVFilePath        string
+	KafkaChunkSize     int
+	KafkaDelaySeconds  time.Duration
+	KafkaConsumerGroup string
 }
 
 func NewConfig() *Config {
 	return &Config{
-		KafkaBroker:       "localhost:9092",
-		KafkaTopic:        "test-topic2",
-		CSVFilePath:       "reviews.csv",
-		KafkaChunkSize:    100,
-		KafkaDelaySeconds: 1 * time.Second,
+		KafkaBroker:        "localhost:9092",
+		KafkaTopic:         "test-topic2",
+		CSVFilePath:        "reviews.csv",
+		KafkaConsumerGroup: "review-consumer-group",
+		KafkaChunkSize:     100,
+		KafkaDelaySeconds:  1 * time.Second,
 	}
 }
 

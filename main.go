@@ -1,7 +1,11 @@
 package main
 
-import kafka "github.com/bigdata1/kafka/producer"
+import (
+	"github.com/bigdata1/kafka/consumer"
+	"github.com/bigdata1/kafka/producer"
+)
 
 func main() {
-	kafka.Producer()
+	producer.Producer()
+	consumer.Consumer()
 }
