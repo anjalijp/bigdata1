@@ -13,8 +13,8 @@ type Config struct {
 
 func NewConfig() *Config {
 	return &Config{
-		KafkaBroker:        "localhost:9092",
-		KafkaTopic:         "test-topic3",
+		KafkaBroker:        "kafka:9092",
+		KafkaTopic:         "test-topic4",
 		CSVFilePath:        "reviews.csv",
 		KafkaConsumerGroup: "review-consumer-group",
 		KafkaChunkSize:     100,

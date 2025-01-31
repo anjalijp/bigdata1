@@ -13,6 +13,7 @@ import (
 
 	"github.com/bigdata1/config"
 	"github.com/bigdata1/models"
+
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
@@ -35,7 +36,7 @@ func CreateTopic() {
 		[]kafka.TopicSpecification{{
 			Topic:             cfg.KafkaTopic,
 			NumPartitions:     1,
-			ReplicationFactor: 3}},
+			ReplicationFactor: 1}},
 
 		kafka.SetAdminOperationTimeout(maxDur))
 	if err != nil {
